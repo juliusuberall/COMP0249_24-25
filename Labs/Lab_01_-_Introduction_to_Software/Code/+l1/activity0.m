@@ -32,4 +32,5 @@ while (simulator.keepRunning()  == true)
     events = simulator.events();
     simulatorViewer.visualize(events);
     drawnow
+    simulator.history()
 end

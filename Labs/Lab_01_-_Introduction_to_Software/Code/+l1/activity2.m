@@ -30,6 +30,7 @@ simulatorViewer.start();
 while (simulator.keepRunning()  == true)
     simulator.step();
     events = simulator.events();
+    events{1}
     simulatorViewer.visualize(events);
     drawnow
 end

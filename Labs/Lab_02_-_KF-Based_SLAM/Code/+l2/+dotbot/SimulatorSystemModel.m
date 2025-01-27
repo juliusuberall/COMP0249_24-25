@@ -1,6 +1,12 @@
 classdef SimulatorSystemModel < handle
 
-    properties(GetAccess = public)
+    % This system model is ONLY used by the simulator. Normally the system
+    % model is shared between the simulator and the estimator. However, for
+    % this lab only, there is a significant difference between the two
+    % models - the actual simulator uses a nonlinear model with a vehicle
+    % with orientation, but the SLAM system uses a linear model.
+
+    properties(Access = protected)
 
         % Process noise sample
         Qd;
@@ -21,10 +27,10 @@ classdef SimulatorSystemModel < handle
         RSLAM;
         RSLAMSqrt;
 
-    end
-
-    properties(Access = protected)
+        % The configuration
         config;
+
+        % Short cut to check if we are simulating noise or not
         perturbWithNoise;
     end
 
@@ -42,7 +48,7 @@ classdef SimulatorSystemModel < handle
             obj.setupModels();
         end
 
-        function [x, F, Q] = predictState(obj, x, u, dT)
+        function [x] = predictState(obj, x, u, dT)
 
             sDT = u(1) * dT;
 
@@ -60,44 +66,43 @@ classdef SimulatorSystemModel < handle
             end
         end
 
-        function [z, H, R] = predictRBObservation(obj, x, lXY)
+        function [z, R] = predictGPSObservation(obj, x)
 
-            dXY = lXY - x(1:2);
-            d2=sum(dXY.^2);
-            d=sqrt(d2);
-            z = [d;
-                atan2(dXY(2), dXY(1)) - x(3)];
+            z = obj.HGPS * x(1:2);
 
             if (obj.perturbWithNoise == true)
-                z = z + obj.RRBSqrtm * randn(size(z));
+                z = z + obj.RGPSSqrtm * randn(size(z));
             end
 
-            z(2) = atan2(sin(z(2)), cos(z(2)));
-
-            if (nargout == 3)
-                H=[-dXY(1)/d -dXY(2)/d 0;
-                dXY(2)/d2 -dXY(1)/d2 -1];
-                R = obj.RRB;
-            end
-
+            R = obj.RGPS;
         end
 
-        function [z, Hp, Hl, R] = predictSLAMObservation(obj, x, lXY)
+        function [z, R] = predictBearingObservation(obj, x, sensorXY, sensorTheta)
+
+            dx = x(1) - sensorXY(1);
+            dy = x(2) - sensorXY(2);
+            z = atan2(dy, dx) - deg2rad(sensorTheta);
+            z=atan2(sin(z), cos(z));
+
+            if (obj.perturbWithNoise == true)
+                z = z + obj.RBearingSqrt * randn(size(z));
+            end
+
+            z = g2o.stuff.normalize_theta(z);
+            R = obj.RBearing;
+        end
+
+        function [z, R] = predictSLAMObservation(obj, x, lXY)
 
             z = lXY - x(1:2);
 
             if (obj.perturbWithNoise == true)
                 z = z + obj.RSLAMSqrt * randn(size(z));
             end
-            if (nargout == 4)
-                Hp = -[1 0 0 0;0 0 1 0];
-                Hl = eye(2);
-                R = obj.RSLAM;
-            end
+
+            R = obj.RSLAM;
 
         end
-
-
     end
 
     methods(Access = protected)
@@ -110,7 +115,7 @@ classdef SimulatorSystemModel < handle
             end
 
             if (isfield(obj.config.map.sensors, 'gps'))
-                obj.HGPS = [1 0 0 0;0 0 1 0];
+                obj.HGPS = eye(2);
                 obj.RGPS = eye(2) * obj.config.map.sensors.gps.sigmaR^2;
     
                 if (obj.perturbWithNoise == true)

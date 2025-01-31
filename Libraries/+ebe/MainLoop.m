@@ -48,7 +48,7 @@ classdef MainLoop < ebe.core.ConfigurableComponent
             %       The configuration structure
             %
             % Outputs:
-            %   obj - (handle)
+            %   mainLoop - (handle)
             %      An instance of a MainLoop
 
             % Call the base class constructor
@@ -135,6 +135,23 @@ classdef MainLoop < ebe.core.ConfigurableComponent
         end
 
         function addViewer(obj, viewer)
+            % ADDVIEWER Add a graphical viewer
+            %
+            % Syntax:
+            %   success = mainLoop.addViewer(viewer)
+            %
+            % Description:
+            %   Add a graphical viewer to the mainloop. A graphical viewer 
+            %
+            % Inputs:
+            %   viewer - (ebe.graphics.Event)
+            %       The event to be processed
+            %
+            % Outputs:
+            %   success - (bool)
+            %       Set to true if the event was processed successfuly,
+            %       false otherwise.
+
             obj.viewers{end+1} = viewer;
         end
 

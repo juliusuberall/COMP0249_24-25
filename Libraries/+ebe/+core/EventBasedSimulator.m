@@ -1,5 +1,5 @@
 classdef EventBasedSimulator < ebe.core.EventGenerator
-    % EventGenerator summary of EventBasedSimulator
+    % EventBasedSimulator summary of EventBasedSimulator
     %
     % Components that inherit from this class are discrete time simulators.
     %

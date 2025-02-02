@@ -1,4 +1,7 @@
 classdef SimulatorView < ebe.graphics.EventGeneratorView
+    % SimulatorView summary of SimulatorView
+    %
+    % Visualizes the output of the trianglebot simulator
 
     properties(Access = protected)
 
@@ -27,16 +30,59 @@ classdef SimulatorView < ebe.graphics.EventGeneratorView
 
     methods(Access = public)
         function obj = SimulatorView(config, eventGenerator)
+            % SimulatorView Constructor for SimulatorView
+            %
+            % Syntax:
+            %   slamSystemView = SimulatorView(config, eventGenerator)
+            %
+            % Description:
+            %   Creates an instance of a SimulatorView object. Note that
+            %   the simulator view will attach itself to whichever is the
+            %   currently selected figure.
+            %
+            % Inputs:
+            %   config - (struct)
+            %       The configuration structure
+            %   eventGenerator - (ebe.core.EventGenerator)
+            %       The object to be visualized
+            %
+            % Outputs:
+            %   slamSystemView - (handle)
+            %       An instance of a SimulatorView
+
             obj@ebe.graphics.EventGeneratorView(config, eventGenerator);
             obj.drawAxes = axis;
             obj.centreAxes = false;
         end
 
         function setCentreAxesOnTruth(obj, centreAxes)
+            % SETCENTREAXESONTRUTH Set flag to centre the axes
+            %
+            % Syntax:
+            %   slamSystemView.setCentreAxesOnTruth(centreAxes)
+            %
+            % Description:
+            %   This method sets an internal flag which governs whether the
+            %   axes should be centred on the ground truth value of the
+            %   platform or not.
+            %
+            % Inputs:
+            %   centreAxes - (bool)
+            %       Flag to centre the axes
+
             obj.centreAxes = centreAxes;
         end
 
         function start(obj)
+            % START Start the simulator view
+            %
+            % Syntax:
+            %   slamSystemView.start()
+            %
+            % Description:
+            %   Draw static things which do not change (e.g., landmark
+            %   maps, waypoints) and set up cached handles for graphics
+            %   which are dynamically updated.
 
             % Allocate the ground truth colour first
             xTrueColour = ebe.graphics.DistinguishableColours.assignColour('Ground Truth');
@@ -87,6 +133,19 @@ classdef SimulatorView < ebe.graphics.EventGeneratorView
         end
 
         function visualize(obj, events)
+            % VISUALIZE Update the visualizations.
+            %
+            % Syntax:
+            %   slamSystemView.visualize(events);
+            %
+            % Description:
+            %   Updates the graphical representation. This includes showing
+            %   data from the simulator such as ground truth position and
+            %   recently generated events
+            %
+            % Inputs:
+            %   events - (cell array of ebe.core.Events)
+            %       The latest list of events to visualize
 
             % Update the ground truth position
             xTrue = obj.eventGenerator.xTrue();
@@ -117,6 +176,19 @@ classdef SimulatorView < ebe.graphics.EventGeneratorView
     methods(Access = protected)
 
         function plotGPSAndOccluders(obj, gps)
+            % PLOTGPSANDOCCLUDERS Set up graphics to plot the GPS sensor.
+            %
+            % Syntax:
+            %   slamSystemView.plotGPSAndOccluders(gps)
+            %
+            % Description:
+            %   Set up the graphics for the GPS, including the occluders
+            %   and the measurement itself.
+            %
+            % Inputs:
+            %   gps - (struct)
+            %       The part of the system configuration which specifies
+            %       the GPS sensor properties.
 
             % Draw the GPS observations
             zGPSColour = ebe.graphics.DistinguishableColours.assignColour('gps');            
@@ -138,8 +210,21 @@ classdef SimulatorView < ebe.graphics.EventGeneratorView
         end
 
         function plotBearingSensors(obj, bearing)
+            % PLOTBEARINGSSENSORS Set up graphics to plot the bearing
+            % sensor.
+            %
+            % Syntax:
+            %   slamSystemView.plotBearingSensors(bearing)
+            %
+            % Description:
+            %   Set up the graphics for the bearing sensors. This includes
+            %   the detection cones.
+            %
+            % Inputs:
+            %   bearing - (struct)
+            %       The part of the system configuration which specifies
+            %       the bearing sensor properties.
 
-            % Draw the bearing sensor observations
             zBearingColour = ebe.graphics.DistinguishableColours.assignColour('bearing');            
             obj.bearingObservationGeometry = plot(NaN, NaN, 'Color', zBearingColour);
 
@@ -174,20 +259,77 @@ classdef SimulatorView < ebe.graphics.EventGeneratorView
         end
 
         function plotSLAMSensor(obj, ~)
+            % PLOTSLAMSENSOR Set up graphics to plot the SLAM sensor
+            % sensor.
+            %
+            % Syntax:
+            %   slamSystemView.plotSLAMSensor()
+            %
+            % Description:
+            %   Set up the graphics for the bearing sensors. This includes
+            %   the detection cones.
+            %
+            % Inputs:
+            %   bearing - (struct)
+            %       The part of the system configuration which specifies
+            %       the bearing sensor properties.
+
             slamSensorColour = ebe.graphics.DistinguishableColours.assignColour('slam_sensor_colour');
             obj.slamObservationGeometry = plot(NaN, NaN, 'Color', slamSensorColour, 'LineWidth', 2);
         end
 
         function plotLandmarks(obj, landmarks)
+            % PLOTLANDMARKS Set up graphics to plot the landmarks
+            % identified by SLAM
+            %
+            % Syntax:
+            %   slamSystemView.plotLandmarks(landmarks)
+            %
+            % Description:
+            %   Set up the graphics for the landmarks sensors.
+            %
+            % Inputs:
+            %   landmarks - (struct)
+            %       The part of the system configuration which specifies
+            %       the landmark properties.
+
             landmarkColour = ebe.graphics.DistinguishableColours.assignColour('slam_true_landmarks');
             plot(landmarks(1, :), landmarks(2, :), '+', 'Color', landmarkColour, 'MarkerSize', 7, 'LineWidth', 2);
         end
 
         function visualizeGPSObservation(obj, event)
+            % VISUALIZEGPSOBSERVATION Update the graphics for the GPS
+            % observation
+            %
+            % Syntax:
+            %   slamSystemView.visualizeGPSObservation(event)
+            %
+            % Description:
+            %   Update the graphics (mean and covariance ellipse) for the
+            %   GPS observation, based on the data stored in the event.
+            %
+            % Inputs:
+            %   event - (ebe.core.Event)
+            %       A GPS observation event.
+
             obj.gpsZRDrawer.update(event.data, event.covariance);
         end
 
         function visualizeBearingObservation(obj, event)
+            % VISUALIZEBEARINGOBSERVATION Update the graphics for the
+            % bearing observation.
+            %
+            % Syntax:
+            %   slamSystemView.visualizeBearingObservation(bearing)
+            %
+            % Description:
+            %   Update the measurement (rays) in all the bearing sensors
+            %   that observe the platform using data stored in the event.
+            %
+            % Inputs:
+            %   event - (ebe.core.Event)
+            %       A bearing observation event.
+
             map = obj.eventGenerator.map();
             numObservations = numel(event.info);
             bearing = event.data;
@@ -202,6 +344,20 @@ classdef SimulatorView < ebe.graphics.EventGeneratorView
         end
 
         function visualizeSLAMObservations(obj, event)
+            % VISUALIZESLAMOBSERVATIONS Update the graphics for the
+            % SLAM observations.
+            %
+            % Syntax:
+            %   slamSystemView.visualizeSLAMObservations(event)
+            %
+            % Description:
+            %   Draw the rays which show all the SLAM landmarks observed at
+            %   a given time, using data from the event.
+            %
+            % Inputs:
+            %   event - (ebe.core.Event)
+            %       The landmark observation event.
+
             xTrue = obj.eventGenerator.xTrue();
 
             z = event.data;

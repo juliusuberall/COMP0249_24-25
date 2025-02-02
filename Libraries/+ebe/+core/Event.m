@@ -1,9 +1,11 @@
 classdef Event < handle
     % Event: The class storing the events
     %
-    % ebe is a discrete event-based simulator system. This means everything
-    % happen as a result of events, encoded with time, being sent around.
-    % The event class is used to store the information needed.
+    % Instances of this class are fundamental to the operation of ebe. All
+    % main sensing activities - such as initialization and receipt of
+    % sensor measurements - are carried out using data contained in events.
+    % Each event consists of a time, a type, and an optional payload of
+    % data.
 
     properties(GetAccess = public, SetAccess = protected)
         

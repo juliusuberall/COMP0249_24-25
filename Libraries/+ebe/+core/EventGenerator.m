@@ -38,7 +38,7 @@ classdef EventGenerator < ebe.core.ConfigurableComponent
             %       The configuration structure
             %
             % Outputs:
-            %   obj - (handle)
+            %   eventGenerator - (handle)
             %       An instance of an EventGenerator
             obj = obj@ebe.core.ConfigurableComponent(config);
         end

@@ -127,9 +127,6 @@ classdef EventBasedEstimator < ebe.core.ConfigurableComponent
     end
 
     methods(Access = protected)
-        
-        % Process each individual event. It is assumed these have been
-        % sorted in chronological order.
 
         function success = processEvent(obj, event)
             % PROCESSEVENT process a single event from the event queue
@@ -219,7 +216,6 @@ classdef EventBasedEstimator < ebe.core.ConfigurableComponent
 
         end
 
-        % TODO: VALIDATE
         function registerEventHandler(obj, eventType, eventHandler)
             % REGISTEREVENTHANDLER register a handler for a named event type
             %

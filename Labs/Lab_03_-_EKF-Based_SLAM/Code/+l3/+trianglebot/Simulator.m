@@ -139,6 +139,7 @@ classdef Simulator < ebe.core.EventBasedSimulator
 
             % Set up the process noise
             obj.sigmaUSqrtm = diag(obj.config.platform.controller.odomSigma);
+            obj.sigmaUSqrtm(3, 3) = deg2rad(obj.sigmaUSqrtm(3,3));
             obj.sigmaU = obj.sigmaUSqrtm * obj.sigmaUSqrtm';
 
             % Set the initialization callbabk

@@ -178,10 +178,6 @@ classdef SLAMSystem < ebe.slam.SLAMSystem
             end
             
         end
-
-        function muckUpCovarianceMatrix(obj, muckUp)
-            obj.muckUp = muckUp;
-        end
     end
 
     methods(Access = protected)
@@ -274,7 +270,7 @@ classdef SLAMSystem < ebe.slam.SLAMSystem
         end
 
         % Handle a set of measurements of landmarks
-        function handleSLAMObservationEvent(obj, event)
+        function success = handleSLAMObservationEvent(obj, event)
             % HANDLESLAMOBSERVATIONEVENT Handle the SLAM observation event.
             %
             % Syntax:
@@ -382,10 +378,12 @@ classdef SLAMSystem < ebe.slam.SLAMSystem
                 % Copy over tranposed version
                 obj.P(1:end-NL,landmarkIdx) = obj.P(landmarkIdx, 1:end-NL)';
             end
+            
+            success = true;
         end
 
         function success = handleGPSObservationEvent(obj, event)
-            % HANDLEGPSOBSERVATIONEVENE Handle the GPS observation event.
+            % HANDLEGPSOBSERVATIONEVENT Handle the GPS observation event.
             %
             % Syntax:
             %   slamSystem.handleGPSObservationEvent(event);
@@ -425,13 +423,13 @@ classdef SLAMSystem < ebe.slam.SLAMSystem
         end
 
         function success = handleCompassObservationEvent(obj, event)
-            % HANDLECOMPASSOBSERVATION Handle the compass observation event.
+            % HANDLECOMPASSOBSERVATIONEVENT Handle the compass observation event.
             %
             % Syntax:
             %   slamSystem.handleCompassObservationEvent(event);
             %
             % Description:
-            %   Handle the GPS observation.
+            %   Handle the compass observation.
             %
             % Inputs:
             %   event - (ebe.core.Event)
@@ -467,7 +465,7 @@ classdef SLAMSystem < ebe.slam.SLAMSystem
 
 
         function success = handleBearingObservationEvent(obj, event)
-            % HANDLECBEARINGOBSERVATIONEVENT Handle the bearing observation event.
+            % HANDLEBEARINGOBSERVATIONEVENT Handle the bearing observation event.
             %
             % Syntax:
             %   slamSystem.handleBearingObservationEvent(event);

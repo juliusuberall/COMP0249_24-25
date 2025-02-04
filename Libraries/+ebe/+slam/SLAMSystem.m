@@ -49,13 +49,31 @@ classdef SLAMSystem < ebe.core.EventBasedEstimator
             %       The covariance matrix of the estimate
 
         
-        % Get the mean and covariance history of the robot across the whole
-        % run. This is used for analysis purposes.
         [T, X, PX] = platformEstimateHistory(this);
-        
-        [x, P, landmarkIds] = landmarkEstimates(this);
-                
+
+        [m, Pmm, landmarkIds] = landmarkEstimates(this);
+            % LANDMARKESTIMATES Return the current mean and covariance of
+            % each landmark estimate.
+            %
+            % Syntax:
+            %   [m, Pmm, landmarkIds] = slamSystem.platformEstimate()
+            %
+            % Description:
+            %   Return the current estimates of the landmarks and the IDs.
+            %   The landmark covariances are just the blocks on the
+            %   diagonals. The full landmark covariance block is not
+            %   returned.
+            %
+            %   At a given time, there are Nk landmarks. The dimension of
+            %   each landmark is l
+            %
+            % Outputs:
+            %   m - (lxN_k vector)
+            %       A column vector which contains the estimated mean of
+            %       each landmark position.
+            %   PX - (lxlxN_k double psd matrix)
+            %       A three dimensional matrix which stores the landmark
+            %       estimates. The covariance of landmark 4, for example,
+            %       is given by P(:,:,4)
     end
-
-
 end

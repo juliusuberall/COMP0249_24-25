@@ -37,6 +37,10 @@ classdef OptimizableGraph < g2o.core.HyperGraph
             obj.initializationRequired = true;
             
         end
+
+        function initializationRequired = isInitializationRequired(obj)
+            initializationRequired = obj.initializationRequired;
+        end
  
         function obj = removeVertex(obj, vertex)
             

@@ -10,7 +10,7 @@ classdef SparseOptimizer < g2o.core.OptimizableGraph
        
         % The optimization algorithm
         optimizationAlgorithm;
-        
+
         % Use sparseinv?
         useSparseInv;
         
@@ -31,6 +31,8 @@ classdef SparseOptimizer < g2o.core.OptimizableGraph
             
             % If set to true, use the sparse inverse library
             obj.useSparseInv = (exist('sparseinv_mex', 'file') == 3);
+
+            obj.optimizationReinitialized = true;
         end
     end
     
@@ -143,7 +145,9 @@ classdef SparseOptimizer < g2o.core.OptimizableGraph
                 'g2o:sparseoptimizer:optimizationalgorithmnotset', ...
                 'The optimization algorithm is not set');
             
-            [X, numIterations] = obj.optimizationAlgorithm.solve(obj.X, maximumNumberOfIterations);
+            [X, numIterations] = obj.optimizationAlgorithm.solve(obj.X, maximumNumberOfIterations, ...
+                obj.optimizationReinitialized);
+
             obj.X = X;
         end
 
@@ -252,8 +256,8 @@ classdef SparseOptimizer < g2o.core.OptimizableGraph
                 'The dimensions of X and dX are inconsistent; length(obj.X)=%d, length(dX)=%d', ...
                 length(obj.X), length(dX));
             
-            % Cheesy way to initialise the output vector to the right size
-            XdX = X * 0;
+            % Initialise the output vector to the right size
+            XdX = zeros(size(X));
             
             % Iterate over all the vertices and assign the values to the
             % state vectors. This is not very efficient, but it means that

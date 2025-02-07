@@ -1,43 +1,65 @@
 classdef Event < handle
-
-    % Event
+    % Event: The class storing the events
     %
-    % This is the base class for all events which propagate data
-    %
-    % Properties:
-    %   time - The time of the event real number
-    %   type - A string which specifies the event type
-    %   data - The data (optional) typically this will be the
-    %          numerical value of the observation
-    %   covariance - The covariance matrix
+    % Instances of this class are fundamental to the operation of ebe. All
+    % main sensing activities - such as initialization and receipt of
+    % sensor measurements - are carried out using data contained in events.
+    % Each event consists of a time, a type, and an optional payload of
+    % data.
 
     properties(GetAccess = public, SetAccess = protected)
         
-        % The time of the event.
+        % The time of the event (required).
         time; 
         
-        % The type of the event.
+        % The type of the event (required).
         type;
         
-        % The event data
+        % The event data (optional)
         data;
         
-        % The noise on the event data
+        % The noise on the event data (optional symmetric PSD matrix)
         covariance;
 
-        % Any additional information
+        % Any additional information (optional)
         info;
     end
 
     properties(Access = public)
-    
         % Simulator timestep number; used for debugging
         eventGeneratorStepNumber;
     end
 
     methods(Access = public)
+
         function obj = Event(time, type, data, covariance, info)
-            
+            % Event Constructor for Event
+            %
+            % Syntax:
+            %   event = Event(time, type)
+            %   event = Event(time, type, data)
+            %   event = Event(time, type, data, covariance)
+            %   event = Event(time, type, data, covariance, info)
+            %
+            % Description:
+            %   Creates an instance of an Event object.
+            %
+            % Inputs:
+            %   time - (double)
+            %       The time the event is scheduled to fire
+            %   data - (optional, double, can be a vector)
+            %       Typically contains observation data such as z or
+            %       odometry
+            %   covariance - (optional, postive semidefinite square matrix)
+            %       The covariance associated with the data
+            %   info - (optional)
+            %       Arbitrary field to contain all other data including
+            %       landmark IDs when dealing with SLAM
+            %
+            % Outputs:
+            %   obj - (handle)
+            %       An instance of an Event
+           
             % Copy over the common values
             obj.time = time;
             obj.type = type;

@@ -83,6 +83,9 @@ for n = 1 : numberOfTimeSteps
         graph.addEdge(processModelEdge);
     end
     
+    % To simulate the GPS dropout, the code down here should be disabled
+    % during the specified timesteps.
+
     % Create the measurement edge
     e = ObjectGPSMeasurementEdge();
     
